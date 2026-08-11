@@ -123,7 +123,7 @@ export default async function TeamPage() {
               >
                 <span className="font-medium text-gray-900">{cycle.name}</span>
                 <span className="text-sm text-gray-500">
-                  {cycle.startDate.toLocaleDateString()} - {cycle.endDate.toLocaleDateString()}
+                  {cycle.startDate.toLocaleDateString('en-US')} - {cycle.endDate.toLocaleDateString('en-US')}
                 </span>
               </div>
             ))}

@@ -29,10 +29,29 @@
 }
 
 body {
+  position: relative;
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), 'Outfit', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Background Grid Layer Only — Fades Left to Right behind page content */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-size: 56px 56px;
+  background-image: 
+    linear-gradient(to right, rgba(148, 163, 184, 0.28) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.28) 1px, transparent 1px);
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.35) 55%, rgba(0, 0, 0, 0) 100%);
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.35) 55%, rgba(0, 0, 0, 0) 100%);
 }
 
 h1, h2, h3, h4, h5, h6 {

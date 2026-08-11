@@ -56,7 +56,7 @@ export function FeedbackViewCard({
             </span>
           </div>
           <p className="text-[11px] text-slate-400 mt-1">
-            {new Date(feedback.submittedAt).toLocaleDateString(undefined, {
+            {new Date(feedback.submittedAt).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
               day: 'numeric',
