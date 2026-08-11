@@ -1,6 +1,18 @@
+import { redirect } from 'next/navigation'
+import { getSession } from '@/lib/auth/session'
 import { LoginForm } from './login-form'
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await getSession()
+
+  // If user is already authenticated, redirect to appropriate dashboard
+  if (session?.userId) {
+    if (session.roles?.includes('hr')) {
+      redirect('/hr/dashboard')
+    }
+    redirect('/app/dashboard')
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 py-12 relative overflow-hidden">
       {/* Background ambient lighting */}

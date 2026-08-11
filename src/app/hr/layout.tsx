@@ -15,7 +15,7 @@ export default async function HRLayout({
 
   // Redirect non-HR users
   if (!isHR(user.roles)) {
-    redirect('/app/dashboard?error=unauthorized')
+    redirect('/app/dashboard')
   }
 
   return (

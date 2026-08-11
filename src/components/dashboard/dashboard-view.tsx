@@ -49,11 +49,6 @@ export function DashboardView({
           <span>Feedback submitted successfully.</span>
         </div>
       )}
-      {params.error && (
-        <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-sm font-medium">
-          {params.error === 'unauthorized' ? 'Access denied.' : 'Action restricted.'}
-        </div>
-      )}
 
       {/* Sleek Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-slate-200">

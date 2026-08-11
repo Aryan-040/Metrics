@@ -61,7 +61,7 @@ export const requireRole = cache(async (requiredRoles: UserRole[]) => {
   const hasRequiredRole = requiredRoles.some(role => session.roles.includes(role))
   
   if (!hasRequiredRole) {
-    redirect('/app/dashboard?error=unauthorized')
+    redirect('/app/dashboard')
   }
   
   return session
