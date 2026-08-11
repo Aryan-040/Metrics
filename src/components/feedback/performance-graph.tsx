@@ -7,14 +7,6 @@ interface PerformanceGraphProps {
   feedbackList: Feedback[]
 }
 
-const PARAMETER_COLORS: Record<string, string> = {
-  quality_of_work: '#3b82f6', // blue
-  ownership: '#8b5cf6', // purple
-  communication: '#ec4899', // pink
-  teamwork: '#10b981', // emerald
-  initiative: '#f59e0b', // amber
-}
-
 const PARAMETER_LABELS: Record<string, string> = {
   quality_of_work: 'Quality of Work',
   ownership: 'Ownership',
@@ -23,24 +15,31 @@ const PARAMETER_LABELS: Record<string, string> = {
   initiative: 'Initiative',
 }
 
+const PARAMETER_COLORS: Record<string, string> = {
+  quality_of_work: '#6366f1', // indigo
+  ownership: '#8b5cf6', // purple
+  communication: '#ec4899', // pink
+  teamwork: '#10b981', // emerald
+  initiative: '#f59e0b', // amber
+}
+
 export function PerformanceGraph({ feedbackList }: PerformanceGraphProps) {
   const [selectedView, setSelectedView] = useState<'overall' | 'parameters'>('overall')
   const [hoveredPoint, setHoveredPoint] = useState<{
     cycleName: string
-    date: string
     score: number
     label?: string
   } | null>(null)
 
-  // Sort feedback by date ascending for chronological graph display
+  // Sort feedback by date ascending
   const chronologicalFeedback = [...feedbackList].sort(
     (a, b) => new Date(a.submittedAt).getTime() - new Date(b.submittedAt).getTime()
   )
 
   if (chronologicalFeedback.length === 0) {
     return (
-      <div className="card text-center py-8">
-        <p className="text-gray-500">No performance data available to graph yet.</p>
+      <div className="p-8 text-center bg-white border border-slate-200/80 rounded-2xl">
+        <p className="text-sm text-slate-500">No performance data recorded yet.</p>
       </div>
     )
   }
@@ -55,10 +54,6 @@ export function PerformanceGraph({ feedbackList }: PerformanceGraphProps) {
     return {
       id: f.id,
       cycleName: f.cycleName,
-      date: new Date(f.submittedAt).toLocaleDateString(undefined, {
-        month: 'short',
-        year: 'numeric',
-      }),
       average: Number(avgScore.toFixed(1)),
       scores: f.scores,
     }
@@ -69,20 +64,19 @@ export function PerformanceGraph({ feedbackList }: PerformanceGraphProps) {
   const previousPoint = points.length > 1 ? points[points.length - 2] : null
   const overallAvg =
     points.reduce((sum, p) => sum + p.average, 0) / (points.length || 1)
-  
+
   const delta = previousPoint
     ? Number((latestPoint.average - previousPoint.average).toFixed(1))
     : 0
 
   // SVG Dimension constants
-  const width = 650
-  const height = 220
-  const paddingX = 45
-  const paddingY = 30
+  const width = 600
+  const height = 180
+  const paddingX = 40
+  const paddingY = 25
   const graphWidth = width - paddingX * 2
   const graphHeight = height - paddingY * 2
 
-  // Y axis scale (1 to 5)
   const getY = (val: number) => {
     const minVal = 1
     const maxVal = 5
@@ -90,119 +84,89 @@ export function PerformanceGraph({ feedbackList }: PerformanceGraphProps) {
     return height - paddingY - ratio * graphHeight
   }
 
-  // X axis scale
   const getX = (index: number) => {
     if (points.length === 1) return width / 2
     return paddingX + (index / (points.length - 1)) * graphWidth
   }
 
-  // Generate SVG path for line
   const linePath = points
     .map((p, i) => `${i === 0 ? 'M' : 'L'} ${getX(i)} ${getY(p.average)}`)
     .join(' ')
 
-  // Area path for gradient under line
-  const areaPath = points.length > 1
-    ? `${linePath} L ${getX(points.length - 1)} ${height - paddingY} L ${getX(0)} ${height - paddingY} Z`
-    : ''
-
   return (
-    <div className="card space-y-6">
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-6">
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+      <div className="flex items-center justify-between pb-4 border-b border-slate-100">
         <div>
-          <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <span>Performance Trajectory</span>
-            <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
-              {points.length} {points.length === 1 ? 'Cycle' : 'Cycles'}
-            </span>
+          <h2 className="text-base font-bold text-slate-900">
+            Performance Trajectory
           </h2>
-          <p className="text-sm text-gray-500 mt-0.5">
-            Evaluation trends across performance cycles
+          <p className="text-xs text-slate-500 mt-0.5">
+            Evaluation scores across {points.length} {points.length === 1 ? 'cycle' : 'cycles'}
           </p>
         </div>
 
-        {/* View Toggle */}
-        <div className="flex bg-gray-100 p-1 rounded-xl self-start sm:self-auto">
+        <div className="flex gap-2">
           <button
             onClick={() => setSelectedView('overall')}
-            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
               selectedView === 'overall'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-slate-900 text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Overall Average
+            Overall
           </button>
           <button
             onClick={() => setSelectedView('parameters')}
-            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
               selectedView === 'parameters'
-                ? 'bg-white text-blue-600 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-slate-900 text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            Parameter Breakdown
+            Breakdown
           </button>
         </div>
       </div>
 
-      {/* Summary KPI Cards */}
-      <div className="grid grid-cols-3 gap-3">
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50/50 p-3.5 rounded-xl border border-blue-100">
-          <p className="text-xs font-medium text-blue-600 uppercase tracking-wider">Latest Score</p>
-          <div className="flex items-baseline gap-1.5 mt-1">
-            <span className="text-2xl font-bold text-gray-900">{latestPoint.average}</span>
-            <span className="text-xs text-gray-500">/ 5.0</span>
-          </div>
+      {/* Sleek Minimal Stats Row */}
+      <div className="grid grid-cols-3 gap-6 pt-1">
+        <div>
+          <span className="text-xs font-medium text-slate-400">Latest Rating</span>
+          <p className="text-2xl font-bold text-slate-900 tracking-tight mt-0.5">
+            {latestPoint.average} <span className="text-xs text-slate-400 font-normal">/ 5</span>
+          </p>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50/50 p-3.5 rounded-xl border border-purple-100">
-          <p className="text-xs font-medium text-purple-600 uppercase tracking-wider">Historical Avg</p>
-          <div className="flex items-baseline gap-1.5 mt-1">
-            <span className="text-2xl font-bold text-gray-900">{overallAvg.toFixed(1)}</span>
-            <span className="text-xs text-gray-500">/ 5.0</span>
-          </div>
+        <div>
+          <span className="text-xs font-medium text-slate-400">Overall Average</span>
+          <p className="text-2xl font-bold text-slate-900 tracking-tight mt-0.5">
+            {overallAvg.toFixed(1)} <span className="text-xs text-slate-400 font-normal">/ 5</span>
+          </p>
         </div>
 
-        <div className="bg-gradient-to-br from-emerald-50 to-teal-50/50 p-3.5 rounded-xl border border-emerald-100">
-          <p className="text-xs font-medium text-emerald-600 uppercase tracking-wider">Growth Delta</p>
-          <div className="flex items-baseline gap-1 mt-1">
-            <span className={`text-2xl font-bold ${delta >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
-              {delta > 0 ? `+${delta}` : delta}
-            </span>
-            <span className="text-xs text-gray-500">vs prev</span>
-          </div>
+        <div>
+          <span className="text-xs font-medium text-slate-400">Growth</span>
+          <p className={`text-2xl font-bold tracking-tight mt-0.5 ${delta >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+            {delta > 0 ? `+${delta}` : delta}
+          </p>
         </div>
       </div>
 
-      {/* Interactive Chart Container */}
+      {/* Crisp Chart */}
       <div className="relative pt-2">
-        {/* Hover Tooltip Overlay */}
         {hoveredPoint && (
-          <div className="absolute top-0 right-4 bg-gray-900 text-white px-3 py-1.5 rounded-lg text-xs shadow-lg transition-opacity duration-200 z-10">
-            <p className="font-semibold text-blue-300">{hoveredPoint.cycleName}</p>
-            <p className="text-gray-300">
-              {hoveredPoint.label ? `${hoveredPoint.label}: ` : 'Average: '}
-              <span className="font-bold text-white">{hoveredPoint.score} / 5</span>
-            </p>
+          <div className="absolute top-0 right-0 bg-slate-900 text-white px-3 py-1 rounded-md text-xs font-medium shadow-md">
+            {hoveredPoint.label ? `${hoveredPoint.label}: ` : `${hoveredPoint.cycleName}: `}
+            <span className="font-bold">{hoveredPoint.score} / 5</span>
           </div>
         )}
 
         <div className="w-full overflow-x-auto">
-          <svg
-            viewBox={`0 0 ${width} ${height}`}
-            className="w-full h-auto min-w-[500px]"
-          >
-            <defs>
-              <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
-              </linearGradient>
-            </defs>
-
-            {/* Y Axis Grid Lines & Labels */}
-            {[1, 2, 3, 4, 5].map((val) => {
+          <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto min-w-[450px]">
+            {/* Gridlines */}
+            {[1, 3, 5].map((val) => {
               const y = getY(val)
               return (
                 <g key={val}>
@@ -212,12 +176,12 @@ export function PerformanceGraph({ feedbackList }: PerformanceGraphProps) {
                     x2={width - paddingX}
                     y2={y}
                     stroke="#f1f5f9"
-                    strokeDasharray={val === 1 || val === 5 ? '0' : '4 4'}
+                    strokeDasharray="2 2"
                   />
                   <text
-                    x={paddingX - 12}
-                    y={y + 4}
-                    className="text-[10px] fill-gray-400 font-medium"
+                    x={paddingX - 10}
+                    y={y + 3}
+                    className="text-[10px] fill-slate-400 font-medium"
                     textAnchor="end"
                   >
                     {val}.0
@@ -226,105 +190,79 @@ export function PerformanceGraph({ feedbackList }: PerformanceGraphProps) {
               )
             })}
 
-            {/* X Axis Labels */}
+            {/* X Labels */}
             {points.map((p, i) => (
               <text
                 key={p.id}
                 x={getX(i)}
-                y={height - 8}
-                className="text-[11px] fill-gray-500 font-medium"
+                y={height - 5}
+                className="text-[11px] fill-slate-400 font-medium"
                 textAnchor="middle"
               >
                 {p.cycleName}
               </text>
             ))}
 
-            {/* VIEW 1: Overall Average Line & Gradient */}
+            {/* OVERALL VIEW */}
             {selectedView === 'overall' && (
               <>
                 {points.length > 1 && (
-                  <>
-                    <path d={areaPath} fill="url(#lineGradient)" />
-                    <path
-                      d={linePath}
-                      fill="none"
-                      stroke="#3b82f6"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </>
+                  <path
+                    d={linePath}
+                    fill="none"
+                    stroke="#4f46e5"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 )}
 
-                {/* Point Circles */}
                 {points.map((p, i) => {
                   const x = getX(i)
                   const y = getY(p.average)
                   return (
-                    <g key={p.id} className="cursor-pointer group">
+                    <g key={p.id} className="cursor-pointer">
                       <circle
                         cx={x}
                         cy={y}
-                        r="6"
-                        className="fill-blue-600 stroke-white stroke-[2.5] transition-transform duration-200 group-hover:r-8"
+                        r="4.5"
+                        className="fill-indigo-600 stroke-white stroke-2 hover:r-6 transition-all"
                         onMouseEnter={() =>
                           setHoveredPoint({
                             cycleName: p.cycleName,
-                            date: p.date,
                             score: p.average,
                           })
                         }
                         onMouseLeave={() => setHoveredPoint(null)}
                       />
-                      {/* Value label on top of point */}
-                      <text
-                        x={x}
-                        y={y - 12}
-                        className="text-[11px] font-bold fill-blue-700"
-                        textAnchor="middle"
-                      >
-                        {p.average}
-                      </text>
                     </g>
                   )
                 })}
               </>
             )}
 
-            {/* VIEW 2: Parameter Breakdown (Multi-line representation) */}
+            {/* PARAMETER BREAKDOWN */}
             {selectedView === 'parameters' && (
               <>
                 {Object.keys(PARAMETER_LABELS).map((paramKey) => {
-                  const color = PARAMETER_COLORS[paramKey] || '#3b82f6'
-
+                  const color = PARAMETER_COLORS[paramKey] || '#6366f1'
                   const paramPoints = points
                     .map((p, i) => {
-                      const scoreObj = p.scores.find(
-                        (s) => s.parameterName === paramKey
-                      )
+                      const scoreObj = p.scores.find((s) => s.parameterName === paramKey)
                       if (!scoreObj) return null
                       return {
                         x: getX(i),
                         y: getY(scoreObj.score),
                         score: scoreObj.score,
                         cycleName: p.cycleName,
-                        date: p.date,
                       }
                     })
-                    .filter(Boolean) as Array<{
-                    x: number
-                    y: number
-                    score: number
-                    cycleName: string
-                    date: string
-                  }>
+                    .filter(Boolean) as Array<{ x: number; y: number; score: number; cycleName: string }>
 
                   if (paramPoints.length === 0) return null
 
                   const paramPath = paramPoints
-                    .map(
-                      (pt, idx) => `${idx === 0 ? 'M' : 'L'} ${pt.x} ${pt.y}`
-                    )
+                    .map((pt, idx) => `${idx === 0 ? 'M' : 'L'} ${pt.x} ${pt.y}`)
                     .join(' ')
 
                   return (
@@ -334,9 +272,8 @@ export function PerformanceGraph({ feedbackList }: PerformanceGraphProps) {
                           d={paramPath}
                           fill="none"
                           stroke={color}
-                          strokeWidth="2"
-                          strokeDasharray="2 2"
-                          opacity="0.8"
+                          strokeWidth="1.5"
+                          strokeDasharray="3 3"
                         />
                       )}
                       {paramPoints.map((pt, idx) => (
@@ -344,15 +281,14 @@ export function PerformanceGraph({ feedbackList }: PerformanceGraphProps) {
                           key={idx}
                           cx={pt.x}
                           cy={pt.y}
-                          r="4"
+                          r="3.5"
                           fill={color}
                           stroke="#ffffff"
                           strokeWidth="1.5"
-                          className="cursor-pointer hover:r-6 transition-all"
+                          className="cursor-pointer hover:r-5 transition-all"
                           onMouseEnter={() =>
                             setHoveredPoint({
                               cycleName: pt.cycleName,
-                              date: pt.date,
                               score: pt.score,
                               label: PARAMETER_LABELS[paramKey],
                             })
@@ -369,15 +305,11 @@ export function PerformanceGraph({ feedbackList }: PerformanceGraphProps) {
         </div>
       </div>
 
-      {/* Parameter Legend (when in parameter view) */}
       {selectedView === 'parameters' && (
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-2 border-t border-gray-100">
+        <div className="flex flex-wrap items-center justify-center gap-5 pt-2 border-t border-slate-100">
           {Object.entries(PARAMETER_LABELS).map(([key, label]) => (
-            <div key={key} className="flex items-center gap-1.5 text-xs text-gray-600 font-medium">
-              <span
-                className="w-2.5 h-2.5 rounded-full"
-                style={{ backgroundColor: PARAMETER_COLORS[key] }}
-              />
+            <div key={key} className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: PARAMETER_COLORS[key] }} />
               <span>{label}</span>
             </div>
           ))}

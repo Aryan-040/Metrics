@@ -1,5 +1,4 @@
 import { Feedback } from '@/lib/feedback/types'
-import { ScoreBadge } from './score-badge'
 
 interface FeedbackViewCardProps {
   feedback: Feedback
@@ -32,60 +31,73 @@ export function FeedbackViewCard({
     : 0
 
   return (
-    <div className="card space-y-5">
-      {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-gray-200">
+    <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-6">
+      {/* Card Header */}
+      <div className="flex items-start justify-between pb-4 border-b border-slate-100">
         <div>
-          <p className="text-lg font-bold text-gray-900">{feedback.cycleName}</p>
+          <h3 className="text-base font-bold text-slate-900">{feedback.cycleName}</h3>
           {showManager && (
-            <p className="text-sm text-gray-500">Submitted by: <span className="font-medium text-gray-700">{feedback.managerName}</span></p>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Evaluator: <span className="font-semibold text-slate-700">{feedback.managerName}</span>
+            </p>
           )}
           {showEmployee && (
-            <p className="text-sm text-gray-500">For: <span className="font-medium text-gray-700">{feedback.employeeName}</span></p>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Employee: <span className="font-semibold text-slate-700">{feedback.employeeName}</span>
+            </p>
           )}
         </div>
-        <div className="text-right flex flex-col items-end">
+
+        <div className="text-right">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Overall Avg</span>
-            <ScoreBadge score={Math.round(averageScore)} size="lg" />
+            <span className="text-xs text-slate-400 font-medium">Average Score</span>
+            <span className="px-2.5 py-0.5 bg-slate-900 text-white rounded-md text-xs font-bold">
+              {averageScore.toFixed(1)} / 5
+            </span>
           </div>
-          <p className="text-xs text-gray-400 mt-1">
-            {feedback.submittedAt.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+          <p className="text-[11px] text-slate-400 mt-1">
+            {new Date(feedback.submittedAt).toLocaleDateString(undefined, {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })}
           </p>
         </div>
       </div>
 
-      {/* Parameter Scores & Justifications Breakdown */}
+      {/* Parameter Details */}
       <div className="space-y-4">
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-400">Score Breakdown & Feedback</h4>
-        <div className="grid grid-cols-1 gap-4">
-          {feedback.scores.map((score) => {
-            const paramTitle = formatParameterName(score.parameterName)
-            const label = SCORE_LABELS[score.score] || ''
-            return (
-              <div key={score.parameterId} className="p-4 rounded-xl bg-gray-50 border border-gray-100 space-y-2">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-gray-900">{paramTitle}</span>
-                    {label && (
-                      <span className="text-xs font-medium text-gray-600 bg-gray-200/70 px-2 py-0.5 rounded-full">
-                        {label}
-                      </span>
-                    )}
-                  </div>
-                  <ScoreBadge score={score.score} size="md" />
+        {feedback.scores.map((score) => {
+          const paramTitle = formatParameterName(score.parameterName)
+          const label = SCORE_LABELS[score.score] || ''
+          return (
+            <div
+              key={score.parameterId}
+              className="pb-4 border-b border-slate-100 last:border-0 last:pb-0 space-y-1.5"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-900">{paramTitle}</span>
+                  <span className="text-xs font-medium text-slate-400">
+                    &bull; {label}
+                  </span>
                 </div>
-                {score.justification ? (
-                  <p className="text-sm text-gray-700 leading-relaxed pl-3 border-l-2 border-blue-500 mt-1">
-                    {score.justification}
-                  </p>
-                ) : (
-                  <p className="text-sm text-gray-400 italic mt-1">No detailed justification provided.</p>
-                )}
+                <span className={`text-xs font-bold px-2 py-0.5 rounded ${
+                  score.score >= 4
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : score.score >= 3
+                    ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                    : 'bg-rose-50 text-rose-700 border border-rose-200'
+                }`}>
+                  {score.score} / 5
+                </span>
               </div>
-            )
-          })}
-        </div>
+              <p className="text-xs text-slate-600 leading-relaxed pl-3 border-l-2 border-slate-200">
+                {score.justification}
+              </p>
+            </div>
+          )
+        })}
       </div>
     </div>
   )
