@@ -46,9 +46,13 @@ graph TB
             SessionStore[Session Store]
         end
     end
+
+    subgraph "Connection Pooling Layer"
+        NeonPooler["Neon Connection Pooler (PgBouncer)"]
+    end
     
     subgraph "Database Layer"
-        PostgreSQL[(PostgreSQL)]
+        PostgreSQL[(PostgreSQL Instance)]
     end
     
     Browser --> Login
@@ -62,7 +66,8 @@ graph TB
     RouteHandlers --> Middleware
     ServerActions --> Middleware
     Middleware --> PrismaClient
-    PrismaClient --> PostgreSQL
+    PrismaClient --> NeonPooler
+    NeonPooler --> PostgreSQL
     
     Middleware --> SessionStore
 ```
@@ -74,7 +79,8 @@ sequenceDiagram
     participant B as Browser
     participant M as Middleware
     participant A as Server Action
-    participant P as Prisma
+    participant P as Prisma Client
+    participant NP as Connection Pooler
     participant DB as PostgreSQL
     
     B->>M: Request with Session Cookie
@@ -84,10 +90,12 @@ sequenceDiagram
     else Valid Session
         M->>A: Forward Request with User Context
         A->>P: Query with company_id filter
-        P->>DB: SQL Query
-        DB->>P: Results
-        P->>A: Typed Data
-        A->>B: Response/Render
+        P->>NP: Query Execution
+        NP->>DB: Pooled Connection SQL
+        DB->>NP: SQL Results
+        NP->>P: Streamed Typed Data
+        P->>A: Return Models
+        A->>B: Response / Render
     end
 ```
 
