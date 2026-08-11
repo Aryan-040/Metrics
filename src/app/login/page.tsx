@@ -14,49 +14,69 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 px-4 py-12 relative overflow-hidden">
-      {/* Background ambient lighting */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 relative z-10">
+      {/* LEFT HALF: MINIMAL HIGH-CRAFT BRAND SHOWCASE */}
+      <div className="relative bg-slate-900 text-slate-100 p-8 sm:p-12 lg:p-16 flex flex-col justify-between overflow-hidden border-r border-slate-800">
+        {/* Subtle ambient glow */}
+        <div className="absolute top-0 left-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="w-full max-w-lg relative z-10">
-        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-10 border border-white/20">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-indigo-600 text-white font-extrabold text-2xl shadow-lg shadow-indigo-500/30 mb-4">
+        {/* Top Logo */}
+        <div className="relative z-10">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white font-extrabold text-base flex items-center justify-center">
               P
             </div>
-            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-              Perf<span className="text-indigo-600">Eval</span>
-            </h1>
-            <p className="text-slate-500 text-sm mt-1 font-medium">
-              Performance Evaluation & Trajectory Intelligence
+            <span className="text-xl font-bold tracking-tight text-white">
+              Perf<span className="text-indigo-400">Eval</span>
+            </span>
+          </div>
+        </div>
+
+        {/* Center Minimal Copy */}
+        <div className="relative z-10 space-y-6 max-w-md my-auto py-12">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Performance & Trajectory Intelligence
+          </h1>
+          <p className="text-slate-400 text-sm leading-relaxed font-medium">
+            Continuous evaluations, trajectory analytics, and transparent team growth tracking.
+          </p>
+
+          <div className="pt-2 space-y-2.5">
+            <div className="flex items-center gap-2.5 text-xs font-medium text-slate-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+              <span>Interactive Trajectory Charts</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-xs font-medium text-slate-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+              <span>Multi-Parameter Ratings & Justifications</span>
+            </div>
+            <div className="flex items-center gap-2.5 text-xs font-medium text-slate-300">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              <span>HR Compliance Monitoring</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom footer */}
+        <div className="relative z-10 text-xs text-slate-500 font-medium">
+          &copy; {new Date().getFullYear()} PerfEval Platform Inc.
+        </div>
+      </div>
+
+      {/* RIGHT HALF: SLEEK SIGN IN CONTAINER */}
+      <div className="relative bg-slate-100/70 p-6 sm:p-12 lg:p-16 flex flex-col justify-center items-center">
+        <div className="w-full max-w-xl space-y-5">
+          <div className="space-y-1 text-center sm:text-left">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+              Sign In
+            </h2>
+            <p className="text-xs text-slate-500">
+              Select a demo profile or enter your credentials
             </p>
           </div>
 
-          <LoginForm />
-
-          {/* Quick Demo Credentials Panel */}
-          <div className="mt-8 pt-6 border-t border-slate-200/80">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Quick Demo Accounts</span>
-              <span className="text-xs text-slate-400 font-mono">pass: password123</span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/60 space-y-1">
-                <p className="font-bold text-slate-800 border-b border-slate-200 pb-1">Ashoka Textiles</p>
-                <p className="text-slate-600"><span className="text-slate-400 font-medium">Mgr:</span> priya@ashoka.com</p>
-                <p className="text-slate-600"><span className="text-slate-400 font-medium">HR:</span> hr@ashoka.com</p>
-                <p className="text-slate-600"><span className="text-slate-400 font-medium">Emp:</span> amit@ashoka.com</p>
-              </div>
-
-              <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/60 space-y-1">
-                <p className="font-bold text-slate-800 border-b border-slate-200 pb-1">Bright Path</p>
-                <p className="text-slate-600"><span className="text-slate-400 font-medium">Founder:</span> sarah@brightpath.com</p>
-                <p className="text-slate-600"><span className="text-slate-400 font-medium">HR:</span> hr@brightpath.com</p>
-                <p className="text-slate-600"><span className="text-slate-400 font-medium">Emp:</span> emily@brightpath.com</p>
-              </div>
-            </div>
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8">
+            <LoginForm />
           </div>
         </div>
       </div>
