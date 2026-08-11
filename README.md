@@ -103,3 +103,4 @@ All demo accounts use the password: `password123`.
 
 For complete technical specifications, database schema diagrams, authorization layer details, and UI design patterns, refer to:
 * **[design.md](file:///Users/aryan/Downloads/performance-evaluation-tool/design.md)** — Comprehensive System Architecture Document.
+
