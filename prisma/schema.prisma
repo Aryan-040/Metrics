@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  users                User[]
+  feedbackCycles       FeedbackCycle[]
+  managerRelationships ManagerRelationship[]
+  feedback             Feedback[]
+
+  @@map("companies")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  companyId    String   @map("company_id")
+  email        String
+  passwordHash String   @map("password_hash")
+  name         String
+  roles        String[] @default(["employee"])
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  company                Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  managedRelationships   ManagerRelationship[] @relation("Manager")
+  reportingRelationships ManagerRelationship[] @relation("DirectReport")
+  givenFeedback          Feedback[]            @relation("FeedbackGiver")
+  receivedFeedback       Feedback[]            @relation("FeedbackReceiver")
+
+  @@unique([companyId, email])
+  @@map("users")
+}
+
+model ManagerRelationship {
+  id             String    @id @default(uuid())
+  companyId      String    @map("company_id")
+  managerId      String    @map("manager_id")
+  directReportId String    @map("direct_report_id")
+  startDate      DateTime  @map("start_date") @db.Date
+  endDate        DateTime? @map("end_date") @db.Date
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  company      Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  manager      User    @relation("Manager", fields: [managerId], references: [id], onDelete: Cascade)
+  directReport User    @relation("DirectReport", fields: [directReportId], references: [id], onDelete: Cascade)
+
+  @@unique([managerId, directReportId, startDate])
+  @@map("manager_relationships")
+}
+
+model FeedbackCycle {
+  id        String   @id @default(uuid())
+  companyId String   @map("company_id")
+  name      String
+  startDate DateTime @map("start_date") @db.Date
+  endDate   DateTime @map("end_date") @db.Date
+  createdAt DateTime @default(now()) @map("created_at")
+
+  company  Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  feedback Feedback[]
+
+  @@unique([companyId, startDate])
+  @@map("feedback_cycles")
+}
+
+model FeedbackParameter {
+  id           String @id @default(uuid())
+  name         String @unique
+  description  String
+  displayOrder Int    @map("display_order")
+
+  scores FeedbackScore[]
+
+  @@map("feedback_parameters")
+}
+
+model Feedback {
+  id              String   @id @default(uuid())
+  companyId       String   @map("company_id")
+  managerId       String   @map("manager_id")
+  employeeId      String   @map("employee_id")
+  feedbackCycleId String   @map("feedback_cycle_id")
+  submittedAt     DateTime @default(now()) @map("submitted_at")
+
+  company       Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  manager       User            @relation("FeedbackGiver", fields: [managerId], references: [id], onDelete: Cascade)
+  employee      User            @relation("FeedbackReceiver", fields: [employeeId], references: [id], onDelete: Cascade)
+  feedbackCycle FeedbackCycle   @relation(fields: [feedbackCycleId], references: [id], onDelete: Cascade)
+  scores        FeedbackScore[]
+
+  @@unique([managerId, employeeId, feedbackCycleId])
+  @@map("feedback")
+}
+
+model FeedbackScore {
+  id            String @id @default(uuid())
+  feedbackId    String @map("feedback_id")
+  parameterId   String @map("parameter_id")
+  score         Int
+  justification String
+
+  feedback  Feedback          @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+  parameter FeedbackParameter @relation(fields: [parameterId], references: [id], onDelete: Restrict)
+
+  @@unique([feedbackId, parameterId])
+  @@map("feedback_scores")
+}
