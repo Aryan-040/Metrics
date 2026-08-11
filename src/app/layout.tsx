@@ -15,7 +15,7 @@ const bodyFont = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "PerfEval — Performance Evaluation & Trajectory Tool",
+  title: "Metrics — Performance Evaluation & Trajectory Intelligence",
   description: "Continuous performance evaluation, transparent feedback, and growth tracking for modern teams.",
 };
 

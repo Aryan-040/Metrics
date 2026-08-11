@@ -28,11 +28,11 @@ export function AppNavigation({ user }: AppNavigationProps) {
           <div className="flex items-center gap-8">
             <Link href="/app/dashboard" className="flex items-center gap-2.5 group">
               <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-extrabold text-lg shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-                P
+                M
               </div>
               <div className="flex flex-col">
                 <span className="text-lg font-bold text-slate-900 tracking-tight leading-none group-hover:text-indigo-600 transition-colors">
-                  Perf<span className="text-indigo-600">Eval</span>
+                  Metrics
                 </span>
                 <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest leading-none mt-1">
                   Workspace

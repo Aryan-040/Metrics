@@ -29,7 +29,7 @@ export function HRNavigation({ user }: HRNavigationProps) {
               </div>
               <div className="flex flex-col">
                 <span className="text-lg font-bold text-slate-900 tracking-tight leading-none group-hover:text-purple-600 transition-colors">
-                  Perf<span className="text-purple-600">Eval</span>
+                  Metrics
                 </span>
                 <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest leading-none mt-1">
                   HR Portal

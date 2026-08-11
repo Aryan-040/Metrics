@@ -24,10 +24,10 @@ export default async function LoginPage() {
         <div className="relative z-10">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white font-extrabold text-base flex items-center justify-center">
-              P
+              M
             </div>
             <span className="text-xl font-bold tracking-tight text-white">
-              Perf<span className="text-indigo-400">Eval</span>
+              Metrics
             </span>
           </div>
         </div>
@@ -59,7 +59,7 @@ export default async function LoginPage() {
 
         {/* Bottom footer */}
         <div className="relative z-10 text-xs text-slate-500 font-medium">
-          &copy; {new Date().getFullYear()} PerfEval Platform Inc.
+          &copy; {new Date().getFullYear()} Metrics Platform Inc.
         </div>
       </div>
 
