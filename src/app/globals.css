@@ -3,11 +3,11 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
   --secondary: #64748b;
-  --success: #16a34a;
-  --warning: #ca8a04;
+  --success: #059669;
+  --warning: #d97706;
   --danger: #dc2626;
   --border: #e2e8f0;
   --card: #ffffff;
@@ -24,54 +24,69 @@
   --color-danger: var(--danger);
   --color-border: var(--border);
   --color-card: var(--card);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display), 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-sans: var(--font-sans), 'Outfit', system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans), 'Outfit', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Form styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display), 'Plus Jakarta Sans', system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Custom UI Utilities */
 .form-input {
-  @apply w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all;
+  @apply w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all text-slate-900 placeholder:text-slate-400 text-sm font-medium shadow-xs;
 }
 
 .form-label {
-  @apply block text-sm font-medium text-gray-700 mb-1.5;
+  @apply block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5;
 }
 
 .btn-primary {
-  @apply w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all;
+  @apply w-full bg-indigo-600 text-white py-2.5 px-4 rounded-xl font-semibold hover:bg-indigo-700 active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm text-sm flex items-center justify-center gap-2;
 }
 
 .btn-secondary {
-  @apply w-full bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg font-medium hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all;
+  @apply w-full bg-slate-100 text-slate-700 py-2.5 px-4 rounded-xl font-semibold hover:bg-slate-200 active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm flex items-center justify-center gap-2;
 }
 
 .card {
-  @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
+  @apply bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 transition-all;
+}
+
+.card-interactive {
+  @apply bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer;
 }
 
 /* Score badge styles */
 .score-badge {
-  @apply inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold;
+  @apply inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold shadow-xs;
 }
 
-.score-1 { @apply bg-red-100 text-red-700; }
-.score-2 { @apply bg-orange-100 text-orange-700; }
-.score-3 { @apply bg-yellow-100 text-yellow-700; }
-.score-4 { @apply bg-green-100 text-green-700; }
-.score-5 { @apply bg-emerald-100 text-emerald-700; }
+.score-1 { @apply bg-rose-100 text-rose-800 border border-rose-200; }
+.score-2 { @apply bg-amber-100 text-amber-800 border border-amber-200; }
+.score-3 { @apply bg-yellow-100 text-yellow-800 border border-yellow-200; }
+.score-4 { @apply bg-emerald-100 text-emerald-800 border border-emerald-200; }
+.score-5 { @apply bg-teal-100 text-teal-800 border border-teal-200; }
 
 /* Status badges */
 .badge {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-wide;
 }
 
-.badge-success { @apply bg-green-100 text-green-700; }
-.badge-warning { @apply bg-yellow-100 text-yellow-700; }
-.badge-danger { @apply bg-red-100 text-red-700; }
-.badge-info { @apply bg-blue-100 text-blue-700; }
+.badge-success { @apply bg-emerald-50 text-emerald-700 border border-emerald-200; }
+.badge-warning { @apply bg-amber-50 text-amber-700 border border-amber-200; }
+.badge-danger { @apply bg-rose-50 text-rose-700 border border-rose-200; }
+.badge-info { @apply bg-indigo-50 text-indigo-700 border border-indigo-200; }
+
+/* Glassmorphism */
+.glass-nav {
+  @apply sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-slate-200/80 shadow-xs;
+}
