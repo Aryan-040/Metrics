@@ -1,4 +1,3 @@
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { verifySession, requireRole } from '@/lib/auth/dal'
 import { getDirectReportsWithFeedbackStatus } from '@/lib/relationships'

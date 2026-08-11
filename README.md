@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Metrics — Performance Evaluation & Trajectory Intelligence
+
+**Metrics** is an enterprise multi-tenant performance evaluation platform built with Next.js 16 (App Router), TypeScript, Tailwind CSS v4, Prisma ORM 6, and Neon Serverless PostgreSQL.
+
+It replaces static annual performance reviews with continuous monthly evaluation cycles, interactive growth trajectory analytics, structured 5-parameter feedback, and real-time HR compliance tracking.
+
+---
+
+## Key Features
+
+* **Performance Trajectory Graph**: Interactive SVG curve visualization tracking employee score progression across evaluation cycles. Supports *Overall Average* and *Parameter Breakdown* view modes with growth delta metrics.
+* **5-Parameter Evaluation Engine**: Structured ratings across **Quality of Work**, **Ownership**, **Communication**, **Teamwork**, and **Initiative** with mandatory written justifications and rating badges (*Poor*, *Below Expectations*, *Meets Expectations*, *Exceeds Expectations*, *Outstanding*).
+* **Multi-Cycle Historical Review**: Cycle selector bar on all dashboard views (*My Feedback*, *Team Reviews*, *HR Compliance*) allowing users to inspect evaluation history across past cycles.
+* **HR Compliance Portal**: Organization-wide completion rates, total manager counts, pending feedback tracking, and missing feedback reports.
+* **Multi-Tenant Data Isolation**: Strict company-level scoping (`company_id`) enforced across database tables, API queries, and Server Actions.
+* **Modern Studio Design System**: 56px architectural background grid with left-to-right fade masking, glassmorphic headers, card spotlight hover elevation, and Google Fonts (`Plus_Jakarta_Sans` & `Outfit`).
+* **1-Click Demo Profiles**: Interactive sign-in page split into a 50/50 showcase with instant 1-click test sign-in buttons for Managers, HR Admins, and Employees.
+
+---
+
+## Technology Stack
+
+| Component | Technology |
+| :--- | :--- |
+| **Framework** | Next.js 16 (App Router + Turbopack) |
+| **Language** | TypeScript (Strict Mode) |
+| **Styling** | Tailwind CSS v4 + Custom Vanilla CSS |
+| **Typography** | Google Fonts (`Plus_Jakarta_Sans` & `Outfit`) |
+| **ORM** | Prisma ORM 6 |
+| **Database** | Neon Serverless PostgreSQL |
+| **Auth & Security** | `jose` (Encrypted HTTP-Only JWT Cookie) + `bcryptjs` |
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Prerequisites
+- **Node.js**: v18.17.0 or higher
+- **npm**: v9.0.0 or higher
 
+### 2. Installation & Setup
+
+Clone the repository and install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-org/performance-evaluation-tool.git
+cd performance-evaluation-tool
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Environment Configuration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a `.env` file in the root directory:
+```env
+# PostgreSQL connection string
+DATABASE_URL="postgresql://neondb_owner:npg_4HfgAe8hWnqa@ep-solitary-smoke-axlx4cyk-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=verify-full&channel_binding=require"
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# JWT session signing secret
+SESSION_SECRET="your-super-secret-key-change-in-production"
+```
 
-## Learn More
+### 4. Database Push & Seed
 
-To learn more about Next.js, take a look at the following resources:
+Push the Prisma schema to your database and run the initial data seeder:
+```bash
+# Push database schema
+npx prisma db push
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Generate Prisma Client
+npx prisma generate
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Seed sample companies, cycles, parameters, and demo accounts
+npx prisma db seed
+```
 
-## Deploy on Vercel
+### 5. Running the Application
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Start the development server:
+```bash
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## Quick Demo Login Profiles
+
+All demo accounts use the password: `password123`.
+
+### Company 1: Ashoka Textiles
+* **Manager**: `priya@ashoka.com` (Priya Sharma — Engineering Manager)
+* **HR Admin**: `hr@ashoka.com` (Ananya Roy — HR Director)
+* **Employee**: `amit@ashoka.com` (Amit Kumar — Software Engineer)
+
+### Company 2: Bright Path Solutions
+* **Manager**: `sarah@brightpath.com` (Sarah Jenkins — Founder & Manager)
+* **HR Admin**: `hr@brightpath.com` (David Miller — HR Lead)
+* **Employee**: `emily@brightpath.com` (Emily Watson — Product Designer)
+
+---
+
+## Architecture & Design Documentation
+
+For complete technical specifications, database schema diagrams, authorization layer details, and UI design patterns, refer to:
+* **[design.md](file:///Users/aryan/Downloads/performance-evaluation-tool/design.md)** — Comprehensive System Architecture Document.

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Performance Evaluation Tool is a multi-tenant web application enabling managers to provide structured monthly feedback to their direct reports. The system supports two organizational models: hierarchical (with middle management) and flat (single manager for all employees). Built with Next.js 14+ App Router and TypeScript, the application uses PostgreSQL for data persistence with Prisma ORM, and a simple seeded authentication system.
+Metrics is a multi-tenant web application enabling managers to provide structured monthly feedback to their direct reports. The system supports two organizational models: hierarchical (with middle management) and flat (single manager for all employees). Built with Next.js 14+ App Router and TypeScript, the application uses PostgreSQL for data persistence with Prisma ORM, and a simple seeded authentication system.
 
 The architecture follows a tenant-isolation-first approach where Company serves as the primary data boundary. All queries are scoped by company_id to ensure complete data isolation between tenants.
 
