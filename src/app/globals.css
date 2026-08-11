@@ -57,12 +57,38 @@ h1, h2, h3, h4, h5, h6 {
   @apply w-full bg-slate-100 text-slate-700 py-2.5 px-4 rounded-xl font-semibold hover:bg-slate-200 active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-sm flex items-center justify-center gap-2;
 }
 
+/* Pop-out Card System with Dark Blur Backdrop Effect */
 .card {
-  @apply bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 transition-all;
+  @apply relative bg-white/95 backdrop-blur-xs rounded-2xl shadow-xs border border-slate-200/80 p-6 transition-all duration-300 ease-out z-10;
+}
+
+.card:hover {
+  @apply -translate-y-1.5 border-slate-300 z-20 bg-white backdrop-blur-md;
+  box-shadow: 
+    0 20px 45px -10px rgba(15, 23, 42, 0.18),
+    0 0 0 1px rgba(15, 23, 42, 0.08),
+    0 0 35px 5px rgba(15, 23, 42, 0.06);
 }
 
 .card-interactive {
-  @apply bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 hover:shadow-md hover:border-slate-300 transition-all cursor-pointer;
+  @apply relative bg-white/95 backdrop-blur-xs rounded-2xl shadow-xs border border-slate-200/80 p-6 transition-all duration-300 ease-out cursor-pointer z-10;
+}
+
+.card-interactive:hover {
+  @apply -translate-y-1.5 border-indigo-300/80 z-20 bg-white backdrop-blur-md;
+  box-shadow: 
+    0 20px 45px -10px rgba(79, 70, 229, 0.2),
+    0 0 0 1px rgba(79, 70, 229, 0.15),
+    0 0 40px 5px rgba(15, 23, 42, 0.08);
+}
+
+/* Container spotlight dim/blur effect for sister cards */
+.card-group {
+  @apply transition-all duration-300;
+}
+
+.card-group:hover .card:not(:hover) {
+  @apply opacity-75 blur-[0.5px] scale-[0.995] transition-all duration-300;
 }
 
 /* Score badge styles */

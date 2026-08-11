@@ -99,7 +99,7 @@ export function DashboardView({
 
       {/* SECTION 1: PERSONAL PERFORMANCE */}
       {(!userIsManager || activeTab === 'personal') && (
-        <div className="space-y-8">
+        <div className="space-y-8 card-group">
           {/* Performance Trajectory Graph */}
           <PerformanceGraph feedbackList={myFeedback} />
 
@@ -131,7 +131,7 @@ export function DashboardView({
       {/* SECTION 2: TEAM MANAGEMENT (FOR MANAGERS) */}
       {userIsManager && activeTab === 'team' && (
         <div className="space-y-6">
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-6">
+          <div className="card space-y-6">
             <div className="flex items-center justify-between pb-4 border-b border-slate-100">
               <div>
                 <h2 className="text-base font-bold text-slate-900">Team Evaluations</h2>

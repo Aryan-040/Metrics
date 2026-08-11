@@ -31,7 +31,7 @@ export function FeedbackViewCard({
     : 0
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-6">
+    <div className="card space-y-6">
       {/* Card Header */}
       <div className="flex items-start justify-between pb-4 border-b border-slate-100">
         <div>

@@ -94,7 +94,7 @@ export function PerformanceGraph({ feedbackList }: PerformanceGraphProps) {
     .join(' ')
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-6">
+    <div className="card space-y-6">
       {/* Header & Controls */}
       <div className="flex items-center justify-between pb-4 border-b border-slate-100">
         <div>
