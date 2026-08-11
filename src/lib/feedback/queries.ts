@@ -20,12 +20,60 @@ export const getFeedbackParameters = cache(async (): Promise<FeedbackParameter[]
 // Get all feedback received by an employee
 export const getFeedbackForEmployee = cache(async (
   employeeId: string,
-  companyId: string
+  companyId: string,
+  cycleId?: string
 ): Promise<Feedback[]> => {
   const feedbackList = await prisma.feedback.findMany({
     where: {
       employeeId,
       companyId,
+      ...(cycleId ? { feedbackCycleId: cycleId } : {}),
+    },
+    include: {
+      manager: { select: { id: true, name: true } },
+      employee: { select: { id: true, name: true } },
+      feedbackCycle: { select: { id: true, name: true } },
+      scores: {
+        include: {
+          parameter: { select: { id: true, name: true } },
+        },
+        orderBy: {
+          parameter: { displayOrder: 'asc' },
+        },
+      },
+    },
+    orderBy: { submittedAt: 'desc' },
+  })
+
+  return feedbackList.map((f) => ({
+    id: f.id,
+    managerId: f.managerId,
+    managerName: f.manager.name,
+    employeeId: f.employeeId,
+    employeeName: f.employee.name,
+    feedbackCycleId: f.feedbackCycleId,
+    cycleName: f.feedbackCycle.name,
+    scores: f.scores.map((s) => ({
+      parameterId: s.parameterId,
+      parameterName: s.parameter.name,
+      score: s.score,
+      justification: s.justification,
+    })),
+    submittedAt: f.submittedAt,
+  }))
+})
+
+// Get all feedback submitted by a manager
+export const getFeedbackByManager = cache(async (
+  managerId: string,
+  companyId: string,
+  cycleId?: string
+): Promise<Feedback[]> => {
+  const feedbackList = await prisma.feedback.findMany({
+    where: {
+      managerId,
+      companyId,
+      ...(cycleId ? { feedbackCycleId: cycleId } : {}),
     },
     include: {
       manager: { select: { id: true, name: true } },

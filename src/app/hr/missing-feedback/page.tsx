@@ -1,30 +1,35 @@
+import Link from 'next/link'
 import { verifySession } from '@/lib/auth/dal'
-import { getCurrentCycle } from '@/lib/cycles'
+import { getCurrentCycle, getCyclesByCompany } from '@/lib/cycles'
 import { getComplianceReport, getComplianceSummary } from '@/lib/hr'
 import { ComplianceTable } from '@/components/hr/compliance-table'
 
 interface MissingFeedbackPageProps {
-  searchParams: Promise<{ filter?: string }>
+  searchParams: Promise<{ filter?: string; cycleId?: string }>
 }
 
 export default async function MissingFeedbackPage({ searchParams }: MissingFeedbackPageProps) {
   const params = await searchParams
   const session = await verifySession()
   const currentCycle = await getCurrentCycle(session.companyId)
+  const cycles = await getCyclesByCompany(session.companyId)
 
-  if (!currentCycle) {
+  const selectedCycleId = params.cycleId || currentCycle?.id || (cycles.length > 0 ? cycles[0].id : '')
+  const selectedCycle = cycles.find(c => c.id === selectedCycleId) || currentCycle
+
+  if (!selectedCycle) {
     return (
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Missing Feedback Report</h1>
+      <div className="max-w-6xl mx-auto space-y-6">
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Missing Feedback Report</h1>
         <div className="card">
-          <p className="text-gray-600">No active feedback cycle found.</p>
+          <p className="text-sm text-slate-500">No evaluation cycles found for your company.</p>
         </div>
       </div>
     )
   }
 
-  const report = await getComplianceReport(session.companyId, currentCycle.id)
-  const summary = await getComplianceSummary(session.companyId, currentCycle.id)
+  const report = await getComplianceReport(session.companyId, selectedCycle.id)
+  const summary = await getComplianceSummary(session.companyId, selectedCycle.id)
   
   const showPendingOnly = params.filter === 'pending'
   const filteredReport = showPendingOnly
@@ -32,31 +37,61 @@ export default async function MissingFeedbackPage({ searchParams }: MissingFeedb
     : report
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Missing Feedback Report</h1>
-        <p className="text-gray-600 mt-1">{currentCycle.name}</p>
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Header & Cycle Selector */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-slate-200">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Missing Feedback Report</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Compliance report for <span className="font-semibold text-slate-800">{selectedCycle.name}</span>
+          </p>
+        </div>
+
+        {cycles.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+              Cycle:
+            </span>
+            {cycles.map((c) => {
+              const isSelected = c.id === selectedCycle.id
+              const isCurrent = currentCycle && c.id === currentCycle.id
+              return (
+                <Link
+                  key={c.id}
+                  href={`/hr/missing-feedback?cycleId=${c.id}${params.filter ? `&filter=${params.filter}` : ''}`}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                    isSelected
+                      ? 'bg-purple-900 text-white shadow-xs'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  }`}
+                >
+                  {c.name} {isCurrent && ' (Current)'}
+                </Link>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="card">
-          <p className="text-sm text-gray-500 mb-1">Total Managers</p>
-          <p className="text-3xl font-bold text-gray-900">{summary.totalManagers}</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Total Managers</p>
+          <p className="text-3xl font-extrabold text-slate-900 tracking-tight">{summary.totalManagers}</p>
         </div>
         <div className="card">
-          <p className="text-sm text-gray-500 mb-1">All Complete</p>
-          <p className="text-3xl font-bold text-green-600">{summary.managersComplete}</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">All Complete</p>
+          <p className="text-3xl font-extrabold text-emerald-600 tracking-tight">{summary.managersComplete}</p>
         </div>
         <div className="card">
-          <p className="text-sm text-gray-500 mb-1">Have Pending</p>
-          <p className="text-3xl font-bold text-yellow-600">{summary.managersPending}</p>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Have Pending</p>
+          <p className="text-3xl font-extrabold text-amber-600 tracking-tight">{summary.managersPending}</p>
         </div>
         <div className="card">
-          <p className="text-sm text-gray-500 mb-1">Completion Rate</p>
-          <p className={`text-3xl font-bold ${
-            summary.completionRate >= 100 ? 'text-green-600' :
-            summary.completionRate >= 50 ? 'text-yellow-600' : 'text-red-600'
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Completion Rate</p>
+          <p className={`text-3xl font-extrabold tracking-tight ${
+            summary.completionRate >= 100 ? 'text-emerald-600' :
+            summary.completionRate >= 50 ? 'text-amber-600' : 'text-rose-600'
           }`}>
             {summary.completionRate.toFixed(0)}%
           </p>
@@ -64,16 +99,11 @@ export default async function MissingFeedbackPage({ searchParams }: MissingFeedb
       </div>
 
       {summary.managersPending === 0 ? (
-        <div className="card bg-green-50 border-green-200">
-          <div className="text-center py-8">
-            <svg className="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="text-green-700 text-lg font-semibold">All feedback complete!</p>
-            <p className="text-green-600 text-sm mt-1">
-              All managers have submitted feedback for {currentCycle.name}
-            </p>
-          </div>
+        <div className="card text-center py-8 bg-emerald-50/50 border-emerald-200/80">
+          <p className="text-base font-bold text-emerald-800">All feedback complete!</p>
+          <p className="text-xs text-emerald-600 mt-1">
+            All managers have submitted feedback for {selectedCycle.name}.
+          </p>
         </div>
       ) : (
         <ComplianceTable
