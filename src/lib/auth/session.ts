@@ -10,13 +10,13 @@ export async function encrypt(payload: SessionPayload): Promise<string> {
   return new SignJWT({ ...payload, expiresAt: payload.expiresAt.toISOString() })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime('24h')
     .sign(encodedKey)
 }
 
 export async function decrypt(session: string | undefined = ''): Promise<SessionPayload | null> {
   if (!session) return null
-  
+
   try {
     const { payload } = await jwtVerify(session, encodedKey, {
       algorithms: ['HS256'],
@@ -34,7 +34,7 @@ export async function decrypt(session: string | undefined = ''): Promise<Session
 }
 
 export async function createSession(userId: string, companyId: string, roles: UserRole[]): Promise<void> {
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
   const session = await encrypt({ userId, companyId, roles, expiresAt })
   const cookieStore = await cookies()
 
@@ -67,7 +67,7 @@ export async function updateSession(): Promise<void> {
     return
   }
 
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
   const newSession = await encrypt({ ...payload, expiresAt })
 
   cookieStore.set('session', newSession, {

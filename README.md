@@ -104,3 +104,15 @@ All demo accounts use the password: `password123`.
 For complete technical specifications, database schema diagrams, authorization layer details, and UI design patterns, refer to:
 * **[design.md](file:///Users/aryan/Downloads/performance-evaluation-tool/design.md)** — Comprehensive System Architecture Document.
 
+### Web Request: Cache Miss & PostgreSQL Fallback
+
+The sequence below shows the full lifecycle of a cache-miss request — from the browser through the API, the Redis cache check, the PostgreSQL fallback query, and the write-back that fills the cache for subsequent requests.
+
+> Open the interactive diagram: [`.archify/sequence-cache-miss-20261008-000000/cache-miss.html`](.archify/sequence-cache-miss-20261008-000000/cache-miss.html)
+
+| Phase | Steps |
+| :--- | :--- |
+| **Inbound Request** | Browser → `GET /data` → API |
+| **Cache Miss & DB Fallback** | API → Redis `GET cache-key` → `nil` → PostgreSQL `SELECT` → rows |
+| **Cache Fill & Response** | API → Redis `SET cache-key (TTL)` → `200 JSON` → Browser |
+
